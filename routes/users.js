@@ -1,8 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
+var User = require('../models/user');
+
+
+var passport = require('passport');
+var localStrategy = require('passport-local').Strategy; 
+
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) {   
   res.send('respond with a resource');
 });
 
@@ -74,11 +80,45 @@ router.post('/register', function(req, res, next) {
 			console.log(user);
 		} );
 		req.flash('success','You are now register, you can log in');
-
+		
 		res.location('/');
 		res.redirect('/');}
 
 });
+
+passport.serializeUser( function(user,done){
+	done(null,user.id);
+}  );
+
+passport.use( new localStrategy(
+	function (username,password,done){
+		User.getUserByUsername(username,function(err,user){
+			if ( err )throw err;
+			if (!user){
+				console.log('Unknown user');
+				return done(null,false,{message:'Unknown user'});
+			}
+			User,comparePassword( password , user.password , function(err,isMatch){
+				if ( err )throw err;
+				if ( isMatch )return done(null,user);
+				else {
+					console.log('Invalid password');
+					return done(null,false,{message:'Invalid password'});	
+				}
+			} );
+		});
+	}
+));
+
+router.post('/login', passport.authenticate('local',{
+	failureRedirect:'/users/login',
+	failureFlash:'invalid username or password'
+} ),function(req,res){
+	console.log('authentication successfull');
+	req.flash('success','you are logged in');
+	res.redirect('/');
+});
+
 
 router.get('/login', function(req, res, next) {
   res.render('login',{title:'Log In'});
