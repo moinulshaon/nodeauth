@@ -21,16 +21,19 @@ html
           ul.nav.navbar-nav
             li(class=( (title=='Members')?'active':'' ))
               a(href='/') Members
-            li(class=( (title=='Register')?'active':'' ))
-              a(href='/users/register') Register
-            li(class=( (title=='Log In')?'active':'' ))
-              a(href='/users/login') Log In
-          ul.nav.navbar-nav.navbar-right
-            li
-              a(href='/users/logout') Log Out
+            if !user
+                li(class=( (title=='Register')?'active':'' ))
+                  a(href='/users/register') Register
+                li(class=( (title=='Log In')?'active':'' ))
+                  a(href='/users/login') Log In
+            if ( user )
+                ul.nav.navbar-nav.navbar-right
+                    li
+                        a(href='/users/logout') Log Out
     .container
         block content
     footer 
+        != messages()
         p All Rights Reserved &copy: 2015
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='javascripts/bootstrap.js')
