@@ -9,7 +9,7 @@ var localStrategy = require('passport-local').Strategy;
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {   
-  res.send('respond with a resource');
+  res.redirect('/');
 });
 
 router.get('/register', function(req, res, next) {
@@ -79,9 +79,8 @@ router.post('/register', function(req, res, next) {
 			}
 			console.log(user);
 		} );
-		req.flash('success','You are now register, you can log in');
+		req.flash('success','You are now registered, you can log in');
 
-		res.location('/');
 		res.redirect('/');
 	}
 
